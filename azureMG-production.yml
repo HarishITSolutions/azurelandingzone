@@ -1,0 +1,357 @@
+mangementGroups:
+ - Name: Vernova
+   DisplayName: Vernova
+   ParentMangementGroup: Tenant Root Group
+   GroupLevel: 0
+   roleAssignmentsEnabled: true
+   roleassignments:
+    - principal: "@GE Vernova Cloud Hosting - Management ReadOnly"
+      type: group
+      role: Reader
+    - principal: "@GE Verova Azure_SecOps_Reader"
+      type: group
+      role: Reader
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:
+ 
+
+ - Name: VN -Guaradrails
+   DisplayName: Guaradrails
+   ParentMangementGroup: Vernova 
+   GroupLevel: 1
+   roleAssignmentsEnabled: false 
+   roleassignments:
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:
+
+ - Name: VN-DecommissionedSubs
+   DisplayName: DecommissionedSubs
+   ParentMangementGroup: Vernova 
+   GroupLevel: 1
+   roleAssignmentsEnabled: true
+   roleassignments:
+    - principal: "Expel Cloud Service - GEVernova"
+      type: ServicePrincipal
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Security Reader
+    - principal: "gev-cirt-ir-automation"
+      type: ServicePrincipal
+      role: VernovaCirtIrAutomation 
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:
+
+ - Name: VN-SpecialSubs
+   DisplayName: SpecialSubs
+   ParentMangementGroup: Vernova 
+   GroupLevel: 1
+   roleAssignmentsEnabled: true
+   roleassignments:
+    - principal: "Expel Cloud Service - GEVernova"
+      type: ServicePrincipal
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Security Reader
+    - principal: "gev-cirt-ir-automation"
+      type: ServicePrincipal
+      role: VernovaCirtIrAutomation 
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:   
+
+ - Name: VN-GR-AZURE-Limited
+   DisplayName: GR-AZURE-Limited
+   ParentMangementGroup: VN-Guardrails
+   GroupLevel: 2
+   roleAssignmentsEnabled: false 
+   roleassignments:
+   initiativeAssignmentEnabled: true
+   initiativeAssignment:
+      - initiativeName: VN-GR-Limited-Inititative
+        assignmentName: VN-GR-Limited-INI
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:
+
+ - Name: VN-GE-Digital-Core-Predix-GR-Limited
+   DisplayName: GE-Digital-Core-Predix-GR-Limited
+   ParentMangementGroup: VN-GE-azure-Limited
+   GroupLevel: 3
+   roleAssignmentsEnabled: true
+   roleassignments:
+    - principal: "@Digital Azure CIRT Power Uaer"
+      type: group
+      role: Reader
+    - principal: "@Expel Cloud Service - GE Vernova Digital"
+      type: ServicePrincipal
+      role: Reader
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:
+
+ - Name: VN-GE-Power-GR-Limited
+   DisplayName: GE-POWER-GR-Limited
+   ParentMangementGroup: VN-GR-AZURE-Limited 
+   GroupLevel: 3
+   roleAssignmentsEnabled: true
+   roleassignments:
+    - principal: "@Gas Power Azure_root_CTO_Admin"
+      type: group
+      role: owner
+    - principal: "@Gas Power Azure_EAAdmin"
+      type: group
+      role: owner
+    - principal: "Expel Cloud Service - GEVernova"
+      type: ServicePrincipal
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Security Reader
+    - principal: "gev-cirt-ir-automation"
+      type: ServicePrincipal
+      role: VernovaCirtIrAutomation 
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:   
+
+
+ - Name: VN-Limited-Standrd
+   DisplayName: GE-Power-GR-Limited-Non-EC
+   ParentMangementGroup: VN-GE-Power-GR-Limited
+   GroupLevel: 4
+   roleAssignmentsEnabled: false 
+   roleassignments:
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:
+
+ - Name: VN-GR-AZURE-Limited-Prob
+   DisplayName: Non-Prob
+   ParentMangementGroup: VN-Limited-Standard
+   GroupLevel: 5
+   roleAssignmentsEnabled: false 
+   roleassignments:
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:
+
+ - Name: VN-GR-AZURE-Limited-Prob
+   DisplayName: Prob
+   ParentMangementGroup: VN-Limited-Standard
+   GroupLevel: 5
+   roleAssignmentsEnabled: false 
+   roleassignments:
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:   
+
+ - Name: VN-GE-Power-GR-Limited-EC
+   DisplayName: Specialized
+   ParentMangementGroup: VN-GE-Power-GR-Limited
+   GroupLevel: 4
+   roleAssignmentsEnabled: false 
+   roleassignments:
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:   
+
+ - Name: VN-GE-Power-Portfolio-GR-Limited
+   DisplayName: GE-Power-Portfolio-GR-Limited
+   ParentMangementGroup: VN-GR-AZURE-Limited 
+   GroupLevel: 3
+   roleAssignmentsEnabled: true
+   roleassignments:
+    - principal: "@Gas Power Azure_root_CTO_Admin"
+      type: group
+      role: owner
+    - principal: "@Gas Power Azure_EAAdmin"
+      type: group
+      role: owner
+    - principal: "Expel Cloud Service - GEVernova"
+      type: ServicePrincipal
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Security Reader
+    - principal: "gev-cirt-ir-automation"
+      type: ServicePrincipal
+      role: VernovaCirtIrAutomation 
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:  
+
+ - Name: VN-GE-Nuclear-GR-Limited
+   DisplayName: GE-Nuclear-GR-Limited
+   ParentMangementGroup:  VN-GE-Power-Portfolio-GR-Limited
+   GroupLevel: 4
+   roleAssignmentsEnabled: false 
+   roleassignments:
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:     
+
+ - Name: VN-GE-Power-Conversion-GR-Limited
+   DisplayName: GE-Power-Conversion-GR-Limited
+   ParentMangementGroup:  VN-GE-Power-Portfolio-GR-Limited
+   GroupLevel: 4
+   roleAssignmentsEnabled: false 
+   roleassignments:
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:   
+
+ - Name: VN-GE-Steam-Power-GR-Limited
+   DisplayName: GE-Steam-Conversion-GR-Limited
+   ParentMangementGroup:  VN-GE-Power-Portfolio-GR-Limited
+   GroupLevel: 4
+   roleAssignmentsEnabled: false 
+   roleassignments:
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:   
+
+      
+ - Name: VN-GE-Renewable-Energy-GR-Limited
+   DisplayName: GE-Renewable-Energy-GR-Limited
+   ParentMangementGroup: VN-GR-AZURE-Limited 
+   GroupLevel: 3
+   roleAssignmentsEnabled: true
+   roleassignments:
+    - principal: "@GE Vernova RE_Azure_Architects"
+      type: group
+      role: owner
+    - principal: "Expel Cloud Service - GEVernova"
+      type: ServicePrincipal
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Security Reader
+    - principal: "gev-cirt-ir-automation"
+      type: ServicePrincipal
+      role: VernovaCirtIrAutomation 
+    - principal: "@GE Vernova GEV RenCloudSecOPS"
+      type: group
+      role: Reader
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:  
+
+ - Name: VN-GE-Vernova-GR-Limited
+   DisplayName: GE-Vernova-GR-Limited
+   ParentMangementGroup: VN-GR-AZURE-Limited 
+   GroupLevel: 3
+   roleAssignmentsEnabled: true
+   roleassignments:
+    - principal: "Expel Cloud Service - GEVernova"
+      type: ServicePrincipal
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Security Reader
+    - principal: "gev-cirt-ir-automation"
+      type: ServicePrincipal
+      role: VernovaCirtIrAutomation 
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:     
+
+ - Name: VN-SMO-Separation-Vernova-GR-Limited
+   DisplayName: SMO-Separation-Vernova-GR-Limited
+   ParentMangementGroup: VN-GR-AZURE-Limited 
+   GroupLevel: 3
+   roleAssignmentsEnabled: true
+   roleassignments:
+    - principal: "Expel Cloud Service - GEVernova"
+      type: ServicePrincipal
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Reader
+    - principal: "GEV-CIRT-IR-SecurityGroup"
+      type: group
+      role: Security Reader
+    - principal: "gev-cirt-ir-automation"
+      type: ServicePrincipal
+      role: VernovaCirtIrAutomation 
+   - principal: "migratesubtoVerniva"
+      type: ServicePrincipal
+      role: Owner 
+   initiativeAssignmentEnabled: false
+   initiativeAssignment:
+   customPolicyAssignmentEnabled: false
+   customPolicyAssignment:
+   builtinPolicyAssignmentEnabled: false 
+   builtinPolicyAssignment:        
+

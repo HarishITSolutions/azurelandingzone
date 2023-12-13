@@ -1,0 +1,304 @@
+# Azure pipeline that run basic continuous on a Teeraform project
+# Running pipeline from Main Branch, Creating artifacts, publishing the artifacts and create plan.out
+
+#trigger: none # Disable CI triggers.
+name : $(SourceBranchName)_$(date:yyyyMMdd).$(Rev:r)
+
+
+trigger:
+ branches:
+ include:
+ - stage
+ - prod
+ exclude:
+ - dev 
+ - pre-prod
+ - stage-Master
+ - prod-Master
+pool:
+ vmImage:ubuntu-latest  
+
+
+variables:
+  - group: 'Constants for Azure Build Sandbox'
+  - group: 'constants for Azure Build Prod'
+  - name: "Storage_client_id"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+      value: '$(Storage_client_id_Sandbox)'
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/prod') }}:
+      value: '$(Storage_client_id_Production)'
+  - name: "Storage_client_secret"
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+      value: '$(Storage_client_id_secret_Sandbox)'
+    ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/prod') }}:
+      value: '$(Storage_client_id_secret_Production)'
+  - name: "environmentType"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+      value: 'Sandbox'
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/prod') }}:
+       value: 'Production'
+  - name: "client_id"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: $(clientID_Sandbox)
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/prod') }}:
+       value: $(clientID_Production)
+  - name: "client_secert"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: $(clientSecert_Sandbox)
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/prod') }}:
+       value: '$(clientSecert_Production)'
+  - name: "tenant_id"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+        value: $(tenant_id_Sandbox)
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+        value: $(tenant_id_Production)
+  - name: "subscription_id"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: $(subscription_id_Sandbox)
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+       value: $(subscription_id_Production)
+  - name: "sourcePolicy-YAML"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "$(sourcePolicyYAMLSandbox)"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "$(sourcePolicyYAMLProd)"
+  - name: "sourceMGYAML"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "$(sourceMGYAMLSandbox)"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "$(sourceMGYAMLProd)"
+  - name: "Storage"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "$(StorageSandbox)"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "$(StorageProd)"
+  - name: "Container"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "$(ContainerSandbox)"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "$(ContainerProd)"
+  - name: "RG"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "$(RGSandbox)"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "$(RGProd)"
+  - name: "policyStateFile"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "$(policyStateFileSandbox)"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "$(policyStateFileProd)"
+  - name: "MGRAStateFile"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "$(MGRAStateFileSandbox)"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "$(MGRAStateFileProd)"
+  - name: "accesskey"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "$(accesskeySandbox)"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "$(accesskeyProd)"  
+  - name: "artifact"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "sandbox-artifact"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "Prod-artifact"
+  - name: "Storage_tenant_id"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "$(Storage_tenant_id_Sandbox)"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "$(Storage_tenant_id_Prod)"      
+  - name: "rootMG"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stage') }}:
+       value: "GEVernovaSandbox"
+     ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/Prod') }}:
+      value: "Vernova"
+
+
+stages:
+  - stage: Build_Approval
+    displayName: Build Approval
+    jobs:
+    - deployment: Policy_and_MG_Build
+      displayName: Build Process
+      environment: $(environmentType)
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: PowerShell@2
+              displayName: "Microsoft Agent IP"
+              continueOnError: false
+              inputs:
+                targetType: 'inline'
+                script: |
+                  $ip = Invoke-RestMethod http://ipinfo.io/json | Select -exp ip
+                  Write-host "ip is : $ip"
+
+  - stage: Policy_Initiative_Deployement
+    displayName: Deployement of policy and Initiative
+    jobs:
+    - job: ContinuousIntegrationJob
+      displayName: Policy and Initiative Job
+      steps:
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: |
+              az login --service-principal -u $(Storage_client-id) -p $(Storage_client_secret) --tenant $(Storage_tenant_id)
+              $ip = Invoke-RestMethod http://ipinfo.io/json | Select -exp ip
+              Write-Host "ip is : $ip"
+              az storage account network-rule add -g "$(RG)" --account-name "$(Storage)" --ip-address "$ip"
+              Start-Sleep -Seconds 30
+          displayName: 'Adding agent IP in storage account'
+          continueOnError: false
+
+
+        - task: TerraformCLI@0
+          displayName: 'Terraform Init'
+          continueOnError: false
+          inputs:
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+            commandoptions: '-backend=true -rconfigure -backend-config="storage_account_name=$(Storage)" -backend-config="container_name=$(Container)" -backend-config="Key=$(policyStateFile)" -backend-config="access_key=$(accesskey)"'
+            allowTelemetryCollection: true
+
+        - trask: TerraformCLI@0
+          displayName: 'Terraform Validate'
+          continueOnError: false
+          inputs:
+            command: 'validate'
+            allowTelemetryCollection: true
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+        - task: TerraformCLI@0
+          displayName: 'Terraform plan'    
+          continueOnError: false
+          inputs:
+            command: 'plan'
+            commandOptions: '-target="module.PolicyandInitiativeCreation"  -var  sourcePoliyYAML=$(sourcePolicy-YAML) -var subscriptionID=$(subscription_id) -var tenantID=$(tenant_id) -var clientSecret=$(client_secret) -var sourceME-YAML=$(sourceMGYAML) -var tenantrootMG=$(rootMG)'
+            allowTelemetryCollection: true
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+        - task: ArchiveFiles@2
+          displayNmae: 'Create Plan Artifact'
+          continueOnError: flase
+          inputs: 
+            rootFolderorFile: '$(Build.SourceDirectory)'
+            includeRootFolder: flaser
+            archiveType: 'tar'
+            tarComptression: 'gz'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-policy-$(artifact).tgz'
+            replaceExistingArchive: true
+
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Plan Artifact'
+          continueOnError: flase
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDiretory)'
+            ArtifactName: '$(Build.BuildId)-policy-$(artifact)-tfplan'
+            publishLocation: 'Container'
+            
+            
+        - task: TerraformCLI@0
+          displayName: 'Publish Plan to paln.out'
+          continueOnError; false
+          inputs:
+            command: 'paln'
+            commandOptions: '-target="module.PolicyandInitiativeCreation" -var sourcePolicyYAML=$(sourcePolicy-YAML) -var subscriptionID=$(subscription_id) -var tenantID=$(tenant_id) -var clientID=$(client_secret) var sourceMG-YAML=#(sourceMGYAML) -var tenantrootMG=$(rootMG)'
+            allowTelemetryCollection: true
+            publishPlanResult: 'plan.out'
+            
+        - task:PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script:
+              az login --service-principal -u $(Storage_client-id) -p $(Storage_client_secret) --tenant $(Storage_tenant_id)           
+              $ip = Invoke-RestMethod http://ipinfo.io/json |Select -exp ip
+              write-Host "ip is : $ip"
+              az storage account network-rule remove --resource-group "$(RG)" --account-name "$(Storage)" --ip-address "$ip"
+              Start-Sleep -Seconds 30
+          displayName: 'Removal of agent Ip in storage account'
+          condition: succeededOrFailed()
+             
+    - stage:MG_RA_Policy_INI_Assignments
+      displayName: MG RA Policy and Initiative Assignment
+      jobs:
+      - job:ContinuousIntegrationJob
+        displayName: MG RA Policy INI Assignment Job
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: |
+              az login --service-principal -u $(Storage_client-id) -p $(Storage_client_secret) --tenant $(Storage_tenant_id)
+              $ip = Invoke-RestMethod http://ipinfo.io/json | Select -exp ip
+              Write-Host "ip is : $ip"
+              az storage account network-rule add -g "$(RG)" --account-name "$(Storage)" --ip-address "$ip"
+              Start-Sleep -Seconds 30
+          displayName: 'Adding agent IP in storage account'
+          continueOnError: false
+
+        - task: TerraformCLI@0
+          displayName: 'Terraform Init'
+          continueOnError: false
+          inputs:
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+            commandoptions: '-backend=true -rconfigure -backend-config="storage_account_name=$(Storage)" -backend-config="container_name=$(Container)" -backend-config="Key=$(policyStateFile)" -backend-config="access_key=$(accesskey)"'
+            allowTelemetryCollection: true
+
+        - trask: TerraformCLI@0
+          displayName: 'Terraform Validate'
+          continueOnError: false
+          inputs:
+            command: 'validate'
+            allowTelemetryCollection: true
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+        - task: TerraformCLI@0
+          displayName: 'Terraform plan'    
+          continueOnError: false
+          inputs:
+            command: 'plan'
+            commandOptions: '-target="module.MG-RA-POL-INI-Assignment"  -var  sourcePoliyYAML=$(sourcePolicy-YAML) -var subscriptionID=$(subscription_id) -var tenantID=$(tenant_id) -var clientSecret=$(client_secret) -var sourceME-YAML=$(sourceMGYAML) -var tenantrootMG=$(rootMG)'
+            allowTelemetryCollection: true
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+        - task: ArchiveFiles@2
+          displayNmae: 'Create Plan Artifact'
+          continueOnError: flase
+          inputs: 
+            rootFolderorFile: '$(Build.SourceDirectory)'
+            includeRootFolder: flaser
+            archiveType: 'tar'
+            tarComptression: 'gz'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-MG-$(artifact).tgz'
+            replaceExistingArchive: true
+
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Plan Artifact'
+          continueOnError: flase
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDiretory)'
+            ArtifactName: '$(Build.BuildId)-MG-$(artifact)-tfplan'
+            publishLocation: 'Container'
+            
+            
+        - task: TerraformCLI@0
+          displayName: 'Publish Plan to paln.out'
+          continueOnError; false
+          inputs:
+            command: 'paln'
+            commandOptions: '-target="module.MG-RA-POL-INI-Assignment" -var sourcePolicyYAML=$(sourcePolicy-YAML) -var subscriptionID=$(subscription_id) -var tenantID=$(tenant_id) -var clientID=$(client_secret) var sourceMG-YAML=#(sourceMGYAML) -var tenantrootMG=$(rootMG)'
+            allowTelemetryCollection: true 
+
+        - task:PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script:
+              az login --service-principal -u $(Storage_client-id) -p $(Storage_client_secret) --tenant $(Storage_tenant_id)           
+              $ip = Invoke-RestMethod http://ipinfo.io/json |Select -exp ip
+              write-Host "ip is : $ip"
+              az storage account network-rule remove --resource-group "$(RG)" --account-name "$(Storage)" --ip-address "$ip"
+              Start-Sleep -Seconds 30
+          displayName: 'Removal of agent Ip in storage account'
+          condition: succeededOrFailed()            
