@@ -1,0 +1,61 @@
+serviceprincipal : 
+storage account : azurelandingzonestorage
+resource group : azurelandingzone
+container : landingzonecontainer
+tenant id : dbfcf60c-a4a8-4184-8454-01a7e91a7650
+
+harish [ ~ ]$ az ad sp create-for-rbac
+The output includes credentials that you must protect. Be sure that you do not include these credentials in your code or check the credentials into your source control. For more information, see https://aka.ms/azadsp-cli
+{
+  "appId": "53e4c1ad-f834-4412-b80b-f2fa43f149a4",
+  "displayName": "azure-cli-2023-12-14-05-19-18",
+  "password": "kpY8Q~LHz-nAQGALKBLf5Ma4OWbvxT5aZM0oVbkV",
+  "tenant": "dbfcf60c-a4a8-4184-8454-01a7e91a7650"
+}
+
+
+secret id : bbbb5989-379b-4069-822a-1dd5ec3e0a66
+
+
+object id : a524817b-481f-4d4a-8d5a-8aa7c5e811d0
+=========================================================
+
+access key1: KFUEb+MXr6xul6SSavzE85dAeQTjC3WRPARo0Z5mnOwv+fHxF4a5LVL96KxgSv3CwCW2iBw5PNgW+AStHW42vQ==
+
+connection string :DefaultEndpointsProtocol=https;AccountName=azurelandingzonestorage;AccountKey=KFUEb+MXr6xul6SSavzE85dAeQTjC3WRPARo0Z5mnOwv+fHxF4a5LVL96KxgSv3CwCW2iBw5PNgW+AStHW42vQ==;EndpointSuffix=core.windows.net
+
+
+key2: pdvBe0vy6/v3ElLsX3OD/ZyEIvg/aASpKN4l7vTJcXl9cvf1dmN1sQik9S5gUz+WjZal3ov8aWtB+ASt5+DYNA==
+
+connection string: DefaultEndpointsProtocol=https;AccountName=azurelandingzonestorage;AccountKey=pdvBe0vy6/v3ElLsX3OD/ZyEIvg/aASpKN4l7vTJcXl9cvf1dmN1sQik9S5gUz+WjZal3ov8aWtB+ASt5+DYNA==;EndpointSuffix=core.windows.net
+
+=====================================
+
+ubuntu machine
+name : landingzoneagent
+username : azureuser
+password : P@ssword@123
+public IP : 98.70.43.30
+
+==========================
+
+PAT Token
+
+Name : azurelandingzonepat
+pat token : kwpk6ccbewo3ywattfhb43dx7oxxnuufqnthu2tm53stevltngrq
+
+
+
+===============================================
+
+Display name: harishitsolutions-AZURELANDINGZONE-2299b7d7-fc25-46d8-8302-a2545cc0d7fe
+
+Application (client) ID:8d012ed5-1c2e-4afc-bd2e-c67075ea591f
+Object ID:658a0189-b339-4b83-81b2-abe88d728cb4
+Directory (tenant) ID:dbfcf60c-a4a8-4184-8454-01a7e91a7650
+
+
+ value: zRR8Q~l1YactjwQsz76vD5fwAPkBvZOJNDQh3aF-
+
+Secret ID:611475f4-116d-4ef4-9668-0bf5e770f4ba 
+
